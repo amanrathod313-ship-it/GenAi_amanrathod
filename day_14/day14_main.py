@@ -5,13 +5,13 @@ load_dotenv()
 from pypdf import PdfReader
 from mistralai.client import Mistral
 #pdf reader
-reader=PdfReader("mypdf.pdf")
+reader=PdfReader("aman.pdf")
 text=""
 for page in reader.pages:
     text+=page.extract_text()
 
     #chunking
-    def chunks_text(text,chunk_size=50,overlap=20):
+    def chunks_text(text,chunk_size=1000,overlap=200):
         start=0
         chunks=[]
         while start<len(text):
@@ -37,14 +37,14 @@ collection.add(
 user_input = input("Ask question to pdf :")
 
 relevant = collection.query(
-    query_texts=user_input,
+    query_texts=[user_input],
     n_results = 4
 )
-print(relevant)
-print(relevant.documents)
+#print(relevant)
+#print(relevant.documents)
 # injection + generation
 
-user_prompt = """
+user_prompt = f"""
 give answer using following context only:
 {relevant}
 your answer must be in this pdf only if not found in context then say "answer not found in pdf"
@@ -65,5 +65,5 @@ response = client.chat.complete(
     ]
 )
 
-# print(response.choices[0].message.content)
+print(response.choices[0].message.content)
 
